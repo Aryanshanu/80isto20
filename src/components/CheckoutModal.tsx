@@ -1,12 +1,13 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, CheckCircle2, ShieldAlert, Truck, CreditCard, 
-  Smartphone, MapPin, Calendar, Clock, AlertCircle, ArrowRight, ExternalLink 
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  X, CheckCircle2, ShieldAlert, Truck, CreditCard,
+  Smartphone, AlertCircle, ArrowRight, ExternalLink
 } from 'lucide-react';
-import { PlanSelection, DietType } from '@/lib/types';
+import { PlanSelection } from '@/lib/types';
 import { Button } from './ui/Button';
+import { WHATSAPP_DISPLAY, whatsappLink } from '@/lib/constants';
 
 export interface CheckoutModalProps {
   isOpen: boolean;
@@ -62,20 +63,27 @@ export default function CheckoutModal({
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState('');
 
-  // Sync props on change
-  useEffect(() => {
-    if (initialPlan) {
-      setSelectedPlan(initialPlan);
-      if (initialPlan.frequency === 2) setMealSlot('Both');
-    }
-    if (initialMealName) {
+  // Reset the form to the latest selection whenever the modal transitions from closed to open.
+  // Adjusted during render (React's documented alternative to an effect) rather than via
+  // setState-in-effect, which avoids an extra cascading render pass.
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
+    if (isOpen) {
+      setStep(1);
+      if (initialPlan) {
+        setSelectedPlan(initialPlan);
+      }
       setTrialMeal(initialMealName);
+      if (type === 'trial') {
+        setMealSlot(initialMealSlot);
+      } else if (initialPlan?.frequency === 2) {
+        setMealSlot('Both');
+      } else {
+        setMealSlot('Lunch');
+      }
     }
-    if (initialMealSlot && type === 'trial') {
-      setMealSlot(initialMealSlot);
-    }
-    setStep(1);
-  }, [initialPlan, initialMealName, initialMealSlot, type, isOpen]);
+  }
 
   if (!isOpen) return null;
 
@@ -114,22 +122,27 @@ export default function CheckoutModal({
 
   // WhatsApp Message Generator
   const generateWhatsAppUrl = () => {
-    const message = `*NEW ORDER CONFIRMATION - 80isto20*%0A%0A` +
-      `*Order ID:* ${orderId}%0A` +
-      `*Type:* ${type === 'trial' ? 'Single Trial Meal' : 'Subscription Plan'}%0A` +
-      `*Details:* ${type === 'trial' ? trialMeal : orderTitle}%0A` +
-      `*Meal Slot:* ${mealSlot}%0A` +
-      `*Start Date:* ${startDate}%0A` +
-      `*Total Amount:* ₹${finalPrice.toLocaleString()}%0A%0A` +
-      `*Customer Details:*%0A` +
-      `• Name: ${customerName}%0A` +
-      `• Phone: ${phone}%0A` +
-      `• Delivery Address: ${address}, ${landmark ? landmark + ', ' : ''}${deliveryArea}%0A` +
-      `• Dietary/Allergy Notes: ${allergyNotes || 'None'}%0A` +
-      `• Payment Mode: ${paymentMethod.toUpperCase()}%0A%0A` +
-      `Please confirm my meal dispatch!`;
+    const message = [
+      `*NEW ORDER CONFIRMATION - 80isto20*`,
+      ``,
+      `*Order ID:* ${orderId}`,
+      `*Type:* ${type === 'trial' ? 'Single Trial Meal' : 'Subscription Plan'}`,
+      `*Details:* ${type === 'trial' ? trialMeal : orderTitle}`,
+      `*Meal Slot:* ${mealSlot}`,
+      `*Start Date:* ${startDate}`,
+      `*Total Amount:* ₹${finalPrice.toLocaleString()}`,
+      ``,
+      `*Customer Details:*`,
+      `• Name: ${customerName}`,
+      `• Phone: ${phone}`,
+      `• Delivery Address: ${address}, ${landmark ? landmark + ', ' : ''}${deliveryArea}`,
+      `• Dietary/Allergy Notes: ${allergyNotes || 'None'}`,
+      `• Payment Mode: ${paymentMethod.toUpperCase()}`,
+      ``,
+      `Please confirm my meal dispatch!`,
+    ].join('\n');
 
-    return `https://wa.me/916302408944?text=${message}`;
+    return whatsappLink(message);
   };
 
   return (
@@ -212,11 +225,16 @@ export default function CheckoutModal({
                   Preferred Meal Slot
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {(type === 'trial' ? ['Lunch', 'Dinner'] : selectedPlan.frequency === 2 ? ['Both'] : ['Lunch', 'Dinner']).map((slot) => (
+                  {(type === 'trial'
+                    ? (['Lunch', 'Dinner'] as const)
+                    : selectedPlan.frequency === 2
+                    ? (['Both'] as const)
+                    : (['Lunch', 'Dinner'] as const)
+                  ).map((slot) => (
                     <button
                       key={slot}
                       type="button"
-                      onClick={() => setMealSlot(slot as any)}
+                      onClick={() => setMealSlot(slot)}
                       className={`py-3 px-4 rounded-xl font-bold text-sm border-2 transition-all text-center ${
                         mealSlot === slot
                           ? 'border-brand-coral bg-brand-coral/10 text-brand-navy'
@@ -360,14 +378,25 @@ export default function CheckoutModal({
               </div>
 
               {/* 6km Radius Badge */}
-              <div className="p-3 rounded-xl bg-brand-cream border border-brand-navy/10 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <Truck size={16} className="text-brand-green" />
-                  <span className="font-semibold text-brand-navy">Free Delivery Radius:</span>
-                  <span className="text-brand-green font-bold">Within 6 kms (Covered)</span>
+              {distanceStatus === 'warning' ? (
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle size={16} className="text-amber-600 shrink-0" />
+                    <span className="font-semibold text-brand-navy">
+                      This locality may be beyond our 6 km free zone — a delivery surcharge may apply.
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[11px] font-bold text-brand-navy/60">₹0 Delivery Fee</span>
-              </div>
+              ) : (
+                <div className="p-3 rounded-xl bg-brand-cream border border-brand-navy/10 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <Truck size={16} className="text-brand-green" />
+                    <span className="font-semibold text-brand-navy">Free Delivery Radius:</span>
+                    <span className="text-brand-green font-bold">Within 6 kms (Covered)</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-brand-navy/60">₹0 Delivery Fee</span>
+                </div>
+              )}
 
               <div className="pt-4 flex gap-3">
                 <Button
@@ -534,7 +563,7 @@ export default function CheckoutModal({
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-3 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-xl transition-transform hover:scale-[1.02]"
                 >
-                  <span>Confirm on WhatsApp (6302408944)</span>
+                  <span>Confirm on WhatsApp ({WHATSAPP_DISPLAY})</span>
                   <ExternalLink size={18} />
                 </a>
 

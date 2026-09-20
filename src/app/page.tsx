@@ -11,6 +11,9 @@ import CheckoutModal from '@/components/CheckoutModal';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 import { PlanSelection } from '@/lib/types';
 import { Phone, MessageCircle, Mail, MapPin, Clock, ShieldCheck, Heart } from 'lucide-react';
+import Logo from '@/components/Logo';
+import { InstagramIcon } from '@/components/icons/InstagramIcon';
+import { INSTAGRAM_URL, WHATSAPP_DISPLAY, whatsappLink } from '@/lib/constants';
 
 export default function Home() {
   // Global Checkout Modal State
@@ -96,12 +99,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             {/* Brand Information */}
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-coral flex items-center justify-center text-white font-black text-xl shadow-md">
-                  80<span className="text-brand-navy text-xs">/20</span>
-                </div>
-                <span className="text-3xl font-black tracking-tight text-white">80isto20</span>
-              </div>
+              <Logo theme="dark" size="md" showTagline={false} />
               <p className="text-brand-coral font-bold text-sm">
                 &ldquo;Nutritious Meals • Happier You&rdquo;
               </p>
@@ -110,7 +108,7 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-3 pt-2">
                 <a
-                  href="https://wa.me/916302408944"
+                  href={whatsappLink()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-xl bg-white/10 hover:bg-emerald-600 flex items-center justify-center text-white transition-colors"
@@ -119,7 +117,16 @@ export default function Home() {
                   <MessageCircle size={18} />
                 </a>
                 <a
-                  href="tel:6302408944"
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl bg-white/10 hover:bg-brand-coral flex items-center justify-center text-white transition-colors"
+                  aria-label="Instagram"
+                >
+                  <InstagramIcon size={18} />
+                </a>
+                <a
+                  href={`tel:${WHATSAPP_DISPLAY}`}
                   className="w-9 h-9 rounded-xl bg-white/10 hover:bg-brand-coral flex items-center justify-center text-white transition-colors"
                   aria-label="Phone"
                 >
@@ -209,13 +216,22 @@ export default function Home() {
                 Direct booking line for custom calorie plans, corporate bulk orders, or meal queries:
               </p>
               <a
-                href="https://wa.me/916302408944"
+                href={whatsappLink()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 p-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm w-full justify-center shadow-lg transition-all"
               >
                 <MessageCircle size={18} />
-                <span>+91 6302408944</span>
+                <span>+91 {WHATSAPP_DISPLAY}</span>
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 p-3.5 rounded-2xl bg-white/10 hover:bg-brand-coral text-white font-bold text-sm w-full justify-center shadow-lg transition-all"
+              >
+                <InstagramIcon size={18} />
+                <span>@80isto20 on Instagram</span>
               </a>
               <div className="text-[11px] text-brand-cream/50">
                 Free delivery within 6 km • Maximum 2 freezes per cycle.
