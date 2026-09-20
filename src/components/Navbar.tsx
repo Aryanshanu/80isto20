@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Menu, X, MessageCircle } from 'lucide-react';
+import { Menu, X, MessageCircle, MapPin } from 'lucide-react';
 import { Button } from './ui/Button';
 import Logo from './Logo';
 import { InstagramIcon } from './icons/InstagramIcon';
@@ -23,11 +23,16 @@ export default function Navbar({ onOpenCheckout }: NavbarProps) {
 
   return (
     <nav className="sticky top-0 z-40 bg-brand-cream/90 backdrop-blur-md border-b border-brand-navy/10 transition-all">
-      {/* Top micro-banner */}
-      <div className="bg-brand-navy text-brand-cream text-[11px] py-1.5 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-2">
-        <span className="inline-block w-2 h-2 rounded-full bg-brand-green"></span>
-        <span>Free Delivery up to 6 kms • 45+ Grams of Protein Per Meal • Zero Preservatives</span>
-      </div>
+      {/* Top micro-banner with live delivery-zone indicator */}
+      <a
+        href="#radius-check"
+        className="bg-brand-navy text-brand-cream text-[11px] py-1.5 px-4 flex items-center justify-center gap-2 font-medium tracking-wide hover:bg-brand-navy/90 transition-colors"
+      >
+        <MapPin size={12} className="text-brand-green shrink-0" />
+        <span className="font-bold">Delivering within 6 km radius</span>
+        <span className="hidden sm:inline text-brand-cream/50">•</span>
+        <span className="hidden sm:inline">45+ Grams of Protein Per Meal • Zero Preservatives</span>
+      </a>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">

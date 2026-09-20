@@ -35,3 +35,12 @@ body {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

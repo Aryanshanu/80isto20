@@ -1,14 +1,12 @@
 "use client";
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Flame, UtensilsCrossed, Sun, Moon, Info, 
-  ArrowRight, Sparkles, Check, Heart 
-} from 'lucide-react';
-import { MenuItem, MenuType, MealCategory } from '@/lib/types';
+import { Flame, Sun, Moon, ArrowRight, Sparkles } from 'lucide-react';
+import { MenuItem, MenuType } from '@/lib/types';
 import { LUNCH_MENU, DINNER_MENU, CATEGORIES } from '@/lib/menuData';
-import { Button } from './ui/Button';
 import { cn } from '@/lib/utils';
+import { DietDot } from './DietDot';
+import DishQuickView from './DishQuickView';
 
 interface MenuExplorerProps {
   onSelectTrialDish: (dishName: string, slot: 'Lunch' | 'Dinner') => void;
@@ -18,6 +16,7 @@ interface MenuExplorerProps {
 export default function MenuExplorer({ onSelectTrialDish, initialCategory = 'All' }: MenuExplorerProps) {
   const [menuType, setMenuType] = useState<MenuType>('Lunch');
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
+  const [quickViewItem, setQuickViewItem] = useState<MenuItem | null>(null);
 
   const currentMenu = menuType === 'Lunch' ? LUNCH_MENU : DINNER_MENU;
   const filteredMenu = activeCategory === 'All'
@@ -25,17 +24,17 @@ export default function MenuExplorer({ onSelectTrialDish, initialCategory = 'All
     : currentMenu.filter((item) => item.category === activeCategory);
 
   return (
-    <section id="menu" className="py-24 sm:py-32 bg-brand-navy text-brand-cream relative overflow-hidden">
-      {/* Background radial dot grid */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
+    <section id="menu" className="py-16 sm:py-32 bg-brand-navy text-brand-cream relative">
+      {/* Background radial dot grid — clipped to its own layer so it never constrains the sticky sub-nav below */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center mb-14 max-w-3xl mx-auto">
+        <div className="text-center mb-10 sm:mb-14 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-coral/20 text-brand-coral text-xs font-black uppercase tracking-widest mb-4 border border-brand-coral/30">
-            <UtensilsCrossed size={14} />
+            <Sun size={14} />
             <span>Interactive Menu Explorer</span>
           </div>
 
@@ -43,67 +42,73 @@ export default function MenuExplorer({ onSelectTrialDish, initialCategory = 'All
             Explore Our <span className="text-brand-coral">Daily Menus</span>
           </h2>
           <p className="text-brand-cream/70 text-base sm:text-lg font-medium">
-            {menuType === 'Lunch' 
+            {menuType === 'Lunch'
               ? 'Balanced Bowls for a Brighter Day • High-energy, wholesome lunches crafted for sustained focus'
               : 'Hearty Meals for a Better Tomorrow • Restorative, protein-packed dinners for recovery and wellness'}
           </p>
         </div>
+      </div>
 
-        {/* Tabbed Interface: [Lunch Menu] | [Dinner Menu] */}
-        <div className="flex justify-center mb-10">
-          <div className="bg-white/10 p-1.5 rounded-full flex gap-2 border border-white/10 backdrop-blur-md shadow-xl">
-            <button
-              onClick={() => {
-                setMenuType('Lunch');
-                setActiveCategory('All');
-              }}
-              className={cn(
-                "flex items-center gap-2.5 px-8 sm:px-12 py-3 rounded-full text-xs sm:text-sm font-black transition-all duration-300",
-                menuType === 'Lunch'
-                  ? "bg-brand-coral text-white shadow-xl scale-105"
-                  : "text-brand-cream/70 hover:text-white"
-              )}
-            >
-              <Sun size={18} />
-              <span>Lunch Menu (10 Bowls)</span>
-            </button>
+      {/* Sticky sub-nav: menu type tabs + horizontal-scroll category chips */}
+      <div className="sticky top-[110px] z-30 bg-brand-navy/95 backdrop-blur-md border-y border-white/5 py-4 mb-10 sm:mb-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center mb-4">
+            <div className="bg-white/10 p-1.5 rounded-full flex gap-2 border border-white/10 shadow-xl">
+              <button
+                onClick={() => {
+                  setMenuType('Lunch');
+                  setActiveCategory('All');
+                }}
+                className={cn(
+                  "flex items-center gap-2.5 px-6 sm:px-12 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-black transition-all duration-300",
+                  menuType === 'Lunch'
+                    ? "bg-brand-coral text-white shadow-xl scale-105"
+                    : "text-brand-cream/70 hover:text-white"
+                )}
+              >
+                <Sun size={16} className="inline mr-2 -mt-0.5" />
+                Lunch ({LUNCH_MENU.length})
+              </button>
 
-            <button
-              onClick={() => {
-                setMenuType('Dinner');
-                setActiveCategory('All');
-              }}
-              className={cn(
-                "flex items-center gap-2.5 px-8 sm:px-12 py-3 rounded-full text-xs sm:text-sm font-black transition-all duration-300",
-                menuType === 'Dinner'
-                  ? "bg-brand-coral text-white shadow-xl scale-105"
-                  : "text-brand-cream/70 hover:text-white"
-              )}
-            >
-              <Moon size={18} />
-              <span>Dinner Menu (10 Plates)</span>
-            </button>
+              <button
+                onClick={() => {
+                  setMenuType('Dinner');
+                  setActiveCategory('All');
+                }}
+                className={cn(
+                  "flex items-center gap-2.5 px-6 sm:px-12 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-black transition-all duration-300",
+                  menuType === 'Dinner'
+                    ? "bg-brand-coral text-white shadow-xl scale-105"
+                    : "text-brand-cream/70 hover:text-white"
+                )}
+              >
+                <Moon size={16} className="inline mr-2 -mt-0.5" />
+                Dinner ({DINNER_MENU.length})
+              </button>
+            </div>
+          </div>
+
+          {/* Horizontal-scroll category carousel (Zomato/Swiggy pattern) */}
+          <div className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x snap-mandatory px-1 -mx-1">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={cn(
+                  "shrink-0 snap-start px-5 py-2 rounded-full text-xs font-black transition-all border whitespace-nowrap",
+                  activeCategory === cat
+                    ? "bg-brand-cream text-brand-navy border-brand-cream shadow-md"
+                    : "border-white/15 text-brand-cream/70 hover:border-white/40 hover:text-white bg-white/5"
+                )}
+              >
+                {cat.toUpperCase()}
+              </button>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-2.5 mb-14">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={cn(
-                "px-5 py-2 rounded-full text-xs font-black transition-all border",
-                activeCategory === cat
-                  ? "bg-brand-cream text-brand-navy border-brand-cream shadow-md scale-105"
-                  : "border-white/15 text-brand-cream/70 hover:border-white/40 hover:text-white bg-white/5"
-              )}
-            >
-              {cat.toUpperCase()}
-            </button>
-          ))}
-        </div>
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Dishes Grid */}
         <motion.div
           layout
@@ -114,6 +119,7 @@ export default function MenuExplorer({ onSelectTrialDish, initialCategory = 'All
               <DishCard
                 key={item.id}
                 item={item}
+                onOpenQuickView={() => setQuickViewItem(item)}
                 onSelectTrial={() => onSelectTrialDish(item.name, menuType)}
               />
             ))}
@@ -146,15 +152,26 @@ export default function MenuExplorer({ onSelectTrialDish, initialCategory = 'All
           </div>
         </div>
       </div>
+
+      <DishQuickView
+        item={quickViewItem}
+        onClose={() => setQuickViewItem(null)}
+        onSelectTrial={(mealName, slot) => {
+          setQuickViewItem(null);
+          onSelectTrialDish(mealName, slot);
+        }}
+      />
     </section>
   );
 }
 
 function DishCard({
   item,
+  onOpenQuickView,
   onSelectTrial,
 }: {
   item: MenuItem;
+  onOpenQuickView: () => void;
   onSelectTrial: () => void;
 }) {
   return (
@@ -163,7 +180,9 @@ function DishCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="rounded-[2.4rem] overflow-hidden bg-brand-cream text-brand-navy shadow-2xl border-4 border-white flex flex-col justify-between group hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300"
+      whileHover={{ y: -4 }}
+      className="rounded-[2.4rem] overflow-hidden bg-brand-cream text-brand-navy shadow-2xl border-4 border-white flex flex-col justify-between group hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-shadow duration-300 cursor-pointer"
+      onClick={onOpenQuickView}
     >
       <div>
         {/* Dish Photography */}
@@ -182,7 +201,7 @@ function DishCard({
             </span>
             {item.isPopular && (
               <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-brand-navy px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
-                <Sparkles size={11} /> Chef Special
+                <Sparkles size={11} /> Bestseller
               </span>
             )}
           </div>
@@ -195,9 +214,12 @@ function DishCard({
 
         {/* Content */}
         <div className="p-6">
-          <h3 className="text-xl font-black text-brand-navy group-hover:text-brand-coral transition-colors leading-snug mb-2.5">
-            {item.name}
-          </h3>
+          <div className="flex items-center gap-2 mb-2.5">
+            <DietDot diet={item.diet} />
+            <h3 className="text-xl font-black text-brand-navy group-hover:text-brand-coral transition-colors leading-snug">
+              {item.name}
+            </h3>
+          </div>
 
           <p className="text-xs text-brand-navy/70 leading-relaxed font-medium mb-4 line-clamp-2">
             {item.description}
@@ -224,7 +246,10 @@ function DishCard({
       {/* Card Action */}
       <div className="p-6 pt-0">
         <button
-          onClick={onSelectTrial}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectTrial();
+          }}
           className="w-full py-3 px-4 rounded-xl bg-brand-navy hover:bg-brand-coral text-white text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-md group-hover:shadow-lg"
         >
           <span>Try This In Trial (₹229)</span>
