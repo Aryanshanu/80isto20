@@ -6,6 +6,7 @@ import {
   Truck, Clock, CheckCircle2, HelpCircle, PhoneCall 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { whatsappLink } from '@/lib/constants';
 
 interface Rule {
   id: string;
@@ -209,7 +210,7 @@ export default function RulesSection() {
             </div>
           </div>
           <a
-            href="https://wa.me/916302408944?text=Hi%2080isto20!%20I%20have%20a%20question%20regarding%20the%20subscription%20rules."
+            href={whatsappLink('Hi 80isto20! I have a question regarding the subscription rules.')}
             target="_blank"
             rel="noopener noreferrer"
             className="py-2.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shrink-0"

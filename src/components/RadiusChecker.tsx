@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Button';
 import { MapPin, CheckCircle2, AlertTriangle, Loader2, Navigation, Compass } from 'lucide-react';
+import { WHATSAPP_DISPLAY } from '@/lib/constants';
 
 export default function RadiusChecker() {
   const [address, setAddress] = useState('');
@@ -132,7 +133,7 @@ export default function RadiusChecker() {
                       Notice: Distance is ~{verifiedDistance} km (Beyond our 6 km free zone)
                     </span>
                     <p className="text-xs text-brand-navy/70 mt-0.5">
-                      We can still deliver! A nominal custom delivery partner surcharge may apply. Please ping us on WhatsApp at 6302408944 to finalize your route.
+                      We can still deliver! A nominal custom delivery partner surcharge may apply. Please ping us on WhatsApp at {WHATSAPP_DISPLAY} to finalize your route.
                     </p>
                   </div>
                 </motion.div>

@@ -17,6 +17,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        script: ['var(--font-script)', 'cursive'],
       },
     },
   },

@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from 'react';
-import { Phone, Menu, X, Sparkles, MessageCircle, Utensils } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
 import { Button } from './ui/Button';
+import Logo from './Logo';
+import { InstagramIcon } from './icons/InstagramIcon';
+import { INSTAGRAM_URL, WHATSAPP_DISPLAY, whatsappLink } from '@/lib/constants';
 
 interface NavbarProps {
   onOpenCheckout: (type: 'plan' | 'trial') => void;
@@ -29,18 +32,8 @@ export default function Navbar({ onOpenCheckout }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo & Brand Identity */}
-          <a href="#" className="flex-shrink-0 flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-2xl bg-brand-navy flex items-center justify-center text-brand-coral font-black text-xl shadow-md group-hover:scale-105 transition-transform">
-              80<span className="text-white text-xs">/20</span>
-            </div>
-            <div>
-              <span className="text-2xl font-black text-brand-navy tracking-tight block leading-none">
-                80isto20
-              </span>
-              <span className="text-[11px] font-bold text-brand-green tracking-tight block mt-0.5">
-                Nutritious Meals • Happier You
-              </span>
-            </div>
+          <a href="#" className="flex-shrink-0 group">
+            <Logo size="sm" className="group-hover:scale-[1.02] transition-transform" />
           </a>
 
           {/* Desktop Nav */}
@@ -56,13 +49,23 @@ export default function Navbar({ onOpenCheckout }: NavbarProps) {
             ))}
 
             <a
-              href="https://wa.me/916302408944?text=Hi%2080isto20,%20I%20would%20like%20to%20place%20an%20order."
+              href={whatsappLink('Hi 80isto20, I would like to place an order.')}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors text-xs font-bold border border-emerald-200"
             >
               <MessageCircle size={15} className="text-emerald-600" />
-              <span>WhatsApp: 6302408944</span>
+              <span>WhatsApp: {WHATSAPP_DISPLAY}</span>
+            </a>
+
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Follow 80isto20 on Instagram"
+              className="w-8 h-8 rounded-full bg-brand-coral/10 text-brand-coral hover:bg-brand-coral hover:text-white flex items-center justify-center transition-colors border border-brand-coral/20"
+            >
+              <InstagramIcon size={16} />
             </a>
 
             <div className="flex items-center gap-3">
@@ -120,15 +123,26 @@ export default function Navbar({ onOpenCheckout }: NavbarProps) {
           </div>
 
           <div className="pt-4 border-t border-brand-navy/10 space-y-3">
-            <a
-              href="https://wa.me/916302408944"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
-            >
-              <MessageCircle size={18} />
-              <span>WhatsApp Quick-Order (6302408944)</span>
-            </a>
+            <div className="flex gap-3">
+              <a
+                href={whatsappLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
+              >
+                <MessageCircle size={18} />
+                <span>WhatsApp ({WHATSAPP_DISPLAY})</span>
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow 80isto20 on Instagram"
+                className="px-4 flex items-center justify-center rounded-xl bg-brand-coral/10 text-brand-coral border border-brand-coral/20"
+              >
+                <InstagramIcon size={20} />
+              </a>
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <Button

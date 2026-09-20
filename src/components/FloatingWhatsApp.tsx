@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from 'react';
-import { MessageCircle, Phone, Sparkles, X } from 'lucide-react';
-import { Button } from './ui/Button';
+import { MessageCircle, X } from 'lucide-react';
+import { InstagramIcon } from './icons/InstagramIcon';
+import { INSTAGRAM_URL, WHATSAPP_DISPLAY, whatsappLink } from '@/lib/constants';
 
 interface FloatingWhatsAppProps {
   onOpenTrial: () => void;
@@ -29,27 +30,39 @@ export default function FloatingWhatsApp({ onOpenTrial, onOpenPlans }: FloatingW
           </div>
         )}
 
-        <a
-          href="https://wa.me/916302408944?text=Hi%2080isto20!%20I%20would%20like%20to%20know%20more%20about%20your%20meal%20plans%20and%20trial%20meals."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white p-4 md:px-5 md:py-3.5 rounded-full shadow-2xl transition-all duration-300 hover:scale-105"
-          aria-label="Order on WhatsApp"
-        >
-          <div className="relative">
-            <MessageCircle size={24} className="fill-white" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full border-2 border-emerald-600" />
-          </div>
-          <span className="hidden md:inline font-bold text-sm tracking-wide">
-            WhatsApp Order (6302408944)
-          </span>
-        </a>
+        <div className="flex items-end gap-3">
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center bg-gradient-to-tr from-amber-400 via-brand-coral to-fuchsia-600 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-2xl transition-all duration-300 hover:scale-105"
+            aria-label="Follow 80isto20 on Instagram"
+          >
+            <InstagramIcon size={22} />
+          </a>
+
+          <a
+            href={whatsappLink('Hi 80isto20! I would like to know more about your meal plans and trial meals.')}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white p-4 md:px-5 md:py-3.5 rounded-full shadow-2xl transition-all duration-300 hover:scale-105"
+            aria-label="Order on WhatsApp"
+          >
+            <div className="relative">
+              <MessageCircle size={24} className="fill-white" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full border-2 border-emerald-600" />
+            </div>
+            <span className="hidden md:inline font-bold text-sm tracking-wide">
+              WhatsApp Order ({WHATSAPP_DISPLAY})
+            </span>
+          </a>
+        </div>
       </div>
 
       {/* Sticky Mobile Bottom Conversion Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-brand-navy/10 px-4 py-3 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <a
-          href="https://wa.me/916302408944"
+          href={whatsappLink()}
           target="_blank"
           rel="noopener noreferrer"
           className="p-3 rounded-xl bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors flex items-center justify-center shrink-0"
